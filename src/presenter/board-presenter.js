@@ -19,11 +19,11 @@ export default class BoardPresenter {
     render(this.tripEventsListComponent, this.boardContainer);
     render(new TripEditView(), this.tripEventsListComponent.getElement());
 
-    for (let i = 0; i < this.boardPoints.length; i++) {
-      const destination = this.destination.find(
+    for (let i = 1; i < this.boardPoints.length; i++) {
+      const destination = this.boardDestination.find(
         (item) => item.id === this.boardPoints[i].destination
       );
-      const offers = this.offers.filter(
+      const offers = this.boardOffers.filter(
         (item) => this.boardPoints[i].offers.some((offerId) => offerId === item.id)
       );
 

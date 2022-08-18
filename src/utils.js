@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -28,4 +30,14 @@ const getRandomArray = (a = 0, b = 1, length) => {
   return o;
 };
 
-export { getRandomInteger, getRandomArray };
+const humanizeDateByDays = (dueDate) => dayjs(dueDate).format('D MMM');
+const humanizeDateByYYYYMMDD = (dueDate) => dayjs(dueDate).format('YYYY-M-D');
+const humanizeDateByTime = (dueDate) => dayjs(dueDate).format('H:m');
+
+export {
+  getRandomInteger,
+  getRandomArray,
+  humanizeDateByDays,
+  humanizeDateByYYYYMMDD,
+  humanizeDateByTime
+};

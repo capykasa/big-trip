@@ -1,9 +1,9 @@
 import { generateDestination } from '../mock/destination.js';
-import { generateOffers } from '../mock/offrs.js';
+import { generateOffers } from '../mock/offers.js';
 import { generatePoint } from '../mock/point.js';
 
 export default class PointsModel {
-  points = Array.from({ length: 3 }, generatePoint);
+  points = Array.from({ length: 30 }, generatePoint);
   destination = generateDestination();
   offers = generateOffers();
 
