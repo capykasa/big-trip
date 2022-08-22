@@ -1,4 +1,5 @@
 import { render } from '../render.js';
+import ListEmptyView from '../view/list-empty.js';
 import TripEditView from '../view/trip-edit-view.js';
 import TripEventsListView from '../view/trip-events-list.js';
 import TripPointView from '../view/trip-point.js';
@@ -21,6 +22,11 @@ export default class BoardPresenter {
     this.#boardPoints = [...this.#pointsModel.points];
     this.#boardDestination = [...this.#pointsModel.destination];
     this.#boardOffers = [...this.#pointsModel.offers];
+
+    if (this.#boardPoints.length === 0) {
+      render(new ListEmptyView(), this.#boardContainer);
+      return;
+    }
 
     render(new TripSortView(), this.#boardContainer);
 

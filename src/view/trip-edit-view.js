@@ -1,4 +1,4 @@
-import { DESTINATIONS, TYPES_OF_EVENTS } from '../const';
+import { typesOfEvents } from '../const';
 import { createElement } from '../render';
 import { humanizeDateByDDMMYY, humanizeDateByTime } from '../utils';
 
@@ -56,7 +56,7 @@ const createTripEditTemplate = (task, destination, offers) => {
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Event type</legend>
 
-            ${createEventType(TYPES_OF_EVENTS)}
+            ${createEventType(typesOfEvents)}
 
           </fieldset>
         </div>
@@ -67,7 +67,7 @@ const createTripEditTemplate = (task, destination, offers) => {
             ${type}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
-          ${createListOfDestinations(DESTINATIONS)}
+          ${createListOfDestinations(typesOfEvents)}
         </div>
 
         <div class="event__field-group  event__field-group--time">
