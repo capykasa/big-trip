@@ -5,29 +5,76 @@ import TripPointView from '../view/trip-point.js';
 import TripSortView from '../view/trip-sort-view.js';
 
 export default class BoardPresenter {
-  tripEventsListComponent = new TripEventsListView();
+  #boardContainer = null;
+  #pointsModel = null;
+
+  #tripEventsListComponent = new TripEventsListView();
+
+  #boardPoints = [];
+  #boardDestination = [];
+  #boardOffers = [];
 
   init = (boardContainer, pointsModel) => {
-    this.boardContainer = boardContainer;
-    this.pointsModel = pointsModel;
-    this.boardPoints = [...this.pointsModel.getPoints()];
-    this.boardDestination = [...this.pointsModel.getDestination()];
-    this.boardOffers = [...this.pointsModel.getOffers()];
+    this.#boardContainer = boardContainer;
 
-    render(new TripSortView(), this.boardContainer);
+    this.#pointsModel = pointsModel;
+    this.#boardPoints = [...this.#pointsModel.points];
+    this.#boardDestination = [...this.#pointsModel.destination];
+    this.#boardOffers = [...this.#pointsModel.offers];
 
-    render(this.tripEventsListComponent, this.boardContainer);
-    render(new TripEditView(), this.tripEventsListComponent.getElement());
+    render(new TripSortView(), this.#boardContainer);
 
-    for (let i = 1; i < this.boardPoints.length; i++) {
-      const destination = this.boardDestination.find(
-        (item) => item.id === this.boardPoints[i].destination
+    render(this.#tripEventsListComponent, this.#boardContainer);
+
+    for (let i = 1; i < this.#boardPoints.length; i++) {
+      const destination = this.#boardDestination.find(
+        (item) => item.id === this.#boardPoints[i].destination
       );
-      const offers = this.boardOffers.filter(
-        (item) => this.boardPoints[i].offers.some((offerId) => offerId === item.id)
+      const offers = this.#boardOffers.filter(
+        (item) => this.#boardPoints[i].offers.some((offerId) => offerId === item.id)
       );
 
-      render(new TripPointView(this.boardPoints[i], destination, offers), this.tripEventsListComponent.getElement());
+      this.#renderPoint(this.#boardPoints[i], destination, offers);
     }
+  };
+
+  #renderPoint = (point, destination, offers) => {
+    const tripPointComponent = new TripPointView(point, destination, offers);
+    const tripEditComponent = new TripEditView(point, destination, offers);
+
+    const replaceCardToForm = () => {
+      this.#tripEventsListComponent.element.replaceChild(tripEditComponent.element, tripPointComponent.element);
+    };
+
+    const replaceFormToCard = () => {
+      this.#tripEventsListComponent.element.replaceChild(tripPointComponent.element, tripEditComponent.element);
+    };
+
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        replaceFormToCard();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
+
+    tripPointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replaceCardToForm();
+      document.addEventListener('keydown', onEscKeyDown);
+    });
+
+    tripEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
+
+    tripEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
+
+
+    render(tripPointComponent, this.#tripEventsListComponent.element);
   };
 }

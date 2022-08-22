@@ -5,7 +5,7 @@ export const generateDestination = () => ([
     name: 'Chamonix',
     pictures: [
       {
-        src: 'http://picsum.photos/300/200?r=0.0762563005163317',
+        src: 'img/photos/1.jpg',
         description: 'Chamonix parliament building'
       }
     ]
@@ -16,7 +16,7 @@ export const generateDestination = () => ([
     name: 'Manotuls',
     pictures: [
       {
-        src: 'http://picsum.photos/300/200?r=0.0762563005163317',
+        src: 'img/photos/3.jpg',
         description: 'Manotuls building'
       }
     ]
@@ -27,7 +27,7 @@ export const generateDestination = () => ([
     name: 'Litstand',
     pictures: [
       {
-        src: 'http://picsum.photos/300/200?r=0.0762563005163317',
+        src: 'img/photos/5.jpg',
         description: 'Litstand building'
       }
     ]
