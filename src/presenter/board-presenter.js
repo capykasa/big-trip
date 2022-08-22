@@ -25,7 +25,6 @@ export default class BoardPresenter {
     render(new TripSortView(), this.#boardContainer);
 
     render(this.#tripEventsListComponent, this.#boardContainer);
-    render(new TripEditView(), this.#tripEventsListComponent.element);
 
     for (let i = 1; i < this.#boardPoints.length; i++) {
       const destination = this.#boardDestination.find(
@@ -35,7 +34,47 @@ export default class BoardPresenter {
         (item) => this.#boardPoints[i].offers.some((offerId) => offerId === item.id)
       );
 
-      render(new TripPointView(this.#boardPoints[i], destination, offers), this.#tripEventsListComponent.element);
+      this.#renderPoint(this.#boardPoints[i], destination, offers);
     }
+  };
+
+  #renderPoint = (point, destination, offers) => {
+    const tripPointComponent = new TripPointView(point, destination, offers);
+    const tripEditComponent = new TripEditView(point, destination, offers);
+
+    const replaceCardToForm = () => {
+      this.#tripEventsListComponent.element.replaceChild(tripEditComponent.element, tripPointComponent.element);
+    };
+
+    const replaceFormToCard = () => {
+      this.#tripEventsListComponent.element.replaceChild(tripPointComponent.element, tripEditComponent.element);
+    };
+
+    const onEscKeyDown = (evt) => {
+      if (evt.key === 'Escape' || evt.key === 'Esc') {
+        evt.preventDefault();
+        replaceFormToCard();
+        document.removeEventListener('keydown', onEscKeyDown);
+      }
+    };
+
+    tripPointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replaceCardToForm();
+      document.addEventListener('keydown', onEscKeyDown);
+    });
+
+    tripEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
+
+    tripEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEscKeyDown);
+    });
+
+
+    render(tripPointComponent, this.#tripEventsListComponent.element);
   };
 }
