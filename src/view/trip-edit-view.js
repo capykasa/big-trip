@@ -3,7 +3,7 @@ import { createElement } from '../render';
 
 const createTripEditTemplate = () => {
 
-  const createEventType = (item) => (
+  const createEventType = () => offersByType.map((item) =>
     `<div class="event__type-item">
       <input id="event-type-${item}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item}">
       <label class="event__type-label  event__type-label--${item}" for="event-type-${item}-1">${item}</label>
@@ -25,7 +25,7 @@ const createTripEditTemplate = () => {
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
 
-              ${offersByType.map((item) => createEventType(item))}
+              ${createEventType}
 
             </fieldset>
           </div>
@@ -128,25 +128,30 @@ const createTripEditTemplate = () => {
 };
 
 export default class TripEditView {
+  #element = null;
+  #point = null;
+  #destination = null;
+  #offers = null;
+
   constructor(point, destination, offers) {
-    this.point = point;
-    this.destination = destination;
-    this.offers = offers;
+    this.#point = point;
+    this.#destination = destination;
+    this.#offers = offers;
   }
 
-  getTemplate() {
-    return createTripEditTemplate(this.point, this.destination, this.offers);
+  get template() {
+    return createTripEditTemplate(this.#point, this.#destination, this.#offers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
