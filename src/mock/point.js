@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { TYPES_OF_EVENTS } from '../const';
+import { typesOfEvents } from '../const';
 import { getRandomArray, getRandomInteger } from '../utils';
 
 const generateDate = () => {
@@ -16,5 +16,5 @@ export const generatePoint = () => ({
   destination: getRandomInteger(0, 2),
   id: getRandomInteger(0, 9),
   offers: getRandomArray(0, 6, 3),
-  type: TYPES_OF_EVENTS[getRandomInteger(0, 8)],
+  type: typesOfEvents[getRandomInteger(0, 8)],
 });

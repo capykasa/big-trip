@@ -1,7 +1,13 @@
-const TYPES_OF_EVENTS = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-const DESTINATIONS = ['Amsterdam', 'Geneva', 'Chamonix'];
+const typesOfEvents = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+const destinations = ['Amsterdam', 'Geneva', 'Chamonix'];
+const listEmpty = {
+  EVERTHING: 'Click New Event to create your first point',
+  PAST: 'There are no past events now',
+  FUTURE: 'There are no future events now'
+};
 
 export {
-  TYPES_OF_EVENTS,
-  DESTINATIONS
+  typesOfEvents,
+  destinations,
+  listEmpty
 };
