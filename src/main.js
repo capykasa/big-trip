@@ -1,5 +1,5 @@
+import { render } from './framework/render.js';
 import TripFilterView from './view/trip-filter-view.js';
-import { render } from './render.js';
 import BoardPresenter from './presenter/board-presenter.js';
 import PointsModel from './model/points-model.js';
 

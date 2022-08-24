@@ -1,5 +1,5 @@
+import AbstractView from '../framework/view/abstract-view.js';
 import { typesOfEvents } from '../const';
-import { createElement } from '../render';
 import { humanizeDateByDDMMYY, humanizeDateByTime } from '../utils';
 
 const createTripEditTemplate = (task, destination, offers) => {
@@ -132,13 +132,13 @@ const createTripEditTemplate = (task, destination, offers) => {
   );
 };
 
-export default class TripEditView {
-  #element = null;
+export default class TripEditView extends AbstractView {
   #point = null;
   #destination = null;
   #offers = null;
 
   constructor(point, destination, offers) {
+    super();
     this.#point = point;
     this.#destination = destination;
     this.#offers = offers;
@@ -146,17 +146,5 @@ export default class TripEditView {
 
   get template() {
     return createTripEditTemplate(this.#point, this.#destination, this.#offers);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

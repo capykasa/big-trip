@@ -1,4 +1,4 @@
-import { render } from '../render.js';
+import { render } from '../framework/render.js';
 import ListEmptyView from '../view/list-empty.js';
 import TripEditView from '../view/trip-edit-view.js';
 import TripEventsListView from '../view/trip-events-list.js';
