@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { typesOfEvents } from '../const';
-import { humanizeDateByDDMMYY, humanizeDateByTime } from '../utils';
+import { humanizeDateByDDMMYY, humanizeDateByTime } from '../utils/point';
 
 const createTripEditTemplate = (task, destination, offers) => {
   const { basePrice, dateFrom, dateTo, type } = task;

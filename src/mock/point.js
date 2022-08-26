@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { typesOfEvents } from '../const';
-import { getRandomArray, getRandomInteger } from '../utils';
+import { getRandomArray, getRandomInteger } from '../utils/common';
 
 const generateDate = () => {
   const maxDaysGap = 1447;
