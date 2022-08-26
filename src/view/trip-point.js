@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import { humanizeDateByDays, humanizeDateByYYYYMMDD, humanizeDateByTime } from '../utils';
+import { humanizeDateByDays, humanizeDateByYYYYMMDD, humanizeDateByTime } from '../utils/point';
 
 const createTripPointTemplate = (task, destination, offers) => {
   const { basePrice, dateFrom, dateTo, type } = task;
