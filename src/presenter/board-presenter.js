@@ -1,4 +1,4 @@
-import { render } from '../render.js';
+import { render, replace } from '../framework/render.js';
 import ListEmptyView from '../view/list-empty.js';
 import TripEditView from '../view/trip-edit-view.js';
 import TripEventsListView from '../view/trip-events-list.js';
@@ -33,11 +33,11 @@ export default class BoardPresenter {
     const tripEditComponent = new TripEditView(point, destination, offers);
 
     const replaceCardToForm = () => {
-      this.#tripEventsListComponent.element.replaceChild(tripEditComponent.element, tripPointComponent.element);
+      replace(tripEditComponent, tripPointComponent);
     };
 
     const replaceFormToCard = () => {
-      this.#tripEventsListComponent.element.replaceChild(tripPointComponent.element, tripEditComponent.element);
+      replace(tripPointComponent, tripEditComponent);
     };
 
     const onEscKeyDown = (evt) => {
@@ -48,18 +48,17 @@ export default class BoardPresenter {
       }
     };
 
-    tripPointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    tripPointComponent.setEditClickHandler(() => {
       replaceCardToForm();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    tripEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    tripEditComponent.setEditClickHandler(() => {
       replaceFormToCard();
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    tripEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-      evt.preventDefault();
+    tripEditComponent.setFormSubmitHandler(() => {
       replaceFormToCard();
       document.removeEventListener('keydown', onEscKeyDown);
     });

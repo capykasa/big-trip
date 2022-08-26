@@ -3,10 +3,10 @@ import { typesOfEvents } from '../const';
 import { getRandomArray, getRandomInteger } from '../utils';
 
 const generateDate = () => {
-  const maxDaysGap = 47;
+  const maxDaysGap = 1447;
   const daysGap = getRandomInteger(-maxDaysGap, maxDaysGap);
 
-  return dayjs().add(daysGap, 'hour').toDate();
+  return dayjs().add(daysGap, 'minutes').toDate();
 };
 
 export const generatePoint = () => ({
