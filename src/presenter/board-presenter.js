@@ -1,15 +1,14 @@
-import { render, RenderPosition, replace } from '../framework/render.js';
+import { render, RenderPosition } from '../framework/render.js';
 import ListEmptyView from '../view/list-empty.js';
-import TripEditView from '../view/trip-edit-view.js';
 import TripEventsListView from '../view/trip-events-list.js';
-import TripPointView from '../view/trip-point.js';
 import TripSortView from '../view/trip-sort-view.js';
+import PointPresenter from './point-presenter.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
   #pointsModel = null;
 
-  #tripEventsListComponent = new TripEventsListView();
+  #pointListContainer = new TripEventsListView();
   #listEmptyComponent = new ListEmptyView();
   #tripSortComponent = new TripSortView();
 
@@ -31,42 +30,8 @@ export default class BoardPresenter {
   };
 
   #renderPoint = (point, destination, offers) => {
-    const tripPointComponent = new TripPointView(point, destination, offers);
-    const tripEditComponent = new TripEditView(point, destination, offers);
-
-    const replaceCardToForm = () => {
-      replace(tripEditComponent, tripPointComponent);
-    };
-
-    const replaceFormToCard = () => {
-      replace(tripPointComponent, tripEditComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
-    tripPointComponent.setEditClickHandler(() => {
-      replaceCardToForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    tripEditComponent.setEditClickHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    tripEditComponent.setFormSubmitHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-
-    render(tripPointComponent, this.#tripEventsListComponent.element);
+    const pointPresenter = new PointPresenter(this.#pointListContainer.element);
+    pointPresenter.init(point, destination, offers);
   };
 
   #renderPoints = () => {
@@ -91,7 +56,7 @@ export default class BoardPresenter {
   };
 
   #renderBoard = () => {
-    render(this.#tripEventsListComponent, this.#boardContainer);
+    render(this.#pointListContainer, this.#boardContainer);
 
     if (this.#boardPoints.length === 0) {
       this.#renderListEmpty();
