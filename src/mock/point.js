@@ -14,7 +14,7 @@ export const generatePoint = () => ({
   dateFrom: generateDate(),
   dateTo: generateDate(),
   destination: getRandomInteger(0, 2),
-  id: getRandomInteger(0, 9),
+  id: getRandomInteger(0, 900),
   offers: getRandomArray(0, 6, 3),
   type: typesOfEvents[getRandomInteger(0, 8)],
 });
