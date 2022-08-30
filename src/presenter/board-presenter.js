@@ -1,4 +1,4 @@
-import { render, replace } from '../framework/render.js';
+import { render, RenderPosition, replace } from '../framework/render.js';
 import ListEmptyView from '../view/list-empty.js';
 import TripEditView from '../view/trip-edit-view.js';
 import TripEventsListView from '../view/trip-events-list.js';
@@ -10,6 +10,8 @@ export default class BoardPresenter {
   #pointsModel = null;
 
   #tripEventsListComponent = new TripEventsListView();
+  #listEmptyComponent = new ListEmptyView();
+  #tripSortComponent = new TripSortView();
 
   #boardPoints = [];
   #boardDestination = [];
@@ -67,25 +69,36 @@ export default class BoardPresenter {
     render(tripPointComponent, this.#tripEventsListComponent.element);
   };
 
+  #renderPoints = () => {
+    this.#boardPoints.forEach((point) => {
+      const destination = this.#boardDestination.find(
+        (item) => item.id === point.destination
+      );
+      const offers = this.#boardOffers.filter(
+        (item) => point.offers.some((offerId) => offerId === item.id)
+      );
+
+      this.#renderPoint(point, destination, offers);
+    });
+  };
+
+  #renderSort = () => {
+    render(this.#tripSortComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+  };
+
+  #renderListEmpty = () => {
+    render(this.#listEmptyComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
+  };
+
   #renderBoard = () => {
+    render(this.#tripEventsListComponent, this.#boardContainer);
+
     if (this.#boardPoints.length === 0) {
-      render(new ListEmptyView(), this.#boardContainer);
+      this.#renderListEmpty();
       return;
     }
 
-    render(new TripSortView(), this.#boardContainer);
-
-    render(this.#tripEventsListComponent, this.#boardContainer);
-
-    for (let i = 1; i < this.#boardPoints.length; i++) {
-      const destination = this.#boardDestination.find(
-        (item) => item.id === this.#boardPoints[i].destination
-      );
-      const offers = this.#boardOffers.filter(
-        (item) => this.#boardPoints[i].offers.some((offerId) => offerId === item.id)
-      );
-
-      this.#renderPoint(this.#boardPoints[i], destination, offers);
-    }
+    this.#renderSort();
+    this.#renderPoints();
   };
 }
