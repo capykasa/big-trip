@@ -13,9 +13,18 @@ const FilterType = {
   FUTURE: 'Future'
 };
 
+const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers'
+};
+
 export {
   typesOfEvents,
   destinations,
   listEmpty,
-  FilterType
+  FilterType,
+  SortType
 };
