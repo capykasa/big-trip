@@ -1,4 +1,5 @@
 import { render, RenderPosition } from '../framework/render.js';
+import { updateItem } from '../utils/common.js';
 import ListEmptyView from '../view/list-empty.js';
 import TripEventsListView from '../view/trip-events-list.js';
 import TripSortView from '../view/trip-sort-view.js';
@@ -15,6 +16,7 @@ export default class BoardPresenter {
   #boardPoints = [];
   #boardDestination = [];
   #boardOffers = [];
+  #pointPresenter = new Map();
 
   constructor(boardContainer, pointsModel) {
     this.#boardContainer = boardContainer;
@@ -29,9 +31,15 @@ export default class BoardPresenter {
     this.#renderBoard();
   };
 
+  #handlePointChange = (updatedPoint) => {
+    this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
+    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  };
+
   #renderPoint = (point, destination, offers) => {
-    const pointPresenter = new PointPresenter(this.#pointListContainer.element);
+    const pointPresenter = new PointPresenter(this.#pointListContainer.element, this.#handlePointChange);
     pointPresenter.init(point, destination, offers);
+    this.#pointPresenter.set(point.id, pointPresenter);
   };
 
   #renderPoints = () => {
@@ -45,6 +53,11 @@ export default class BoardPresenter {
 
       this.#renderPoint(point, destination, offers);
     });
+  };
+
+  #clearPoints = () => {
+    this.#pointPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointPresenter.clear();
   };
 
   #renderSort = () => {

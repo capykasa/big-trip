@@ -1,9 +1,10 @@
-import { render, replace } from '../framework/render.js';
+import { remove, render, replace } from '../framework/render.js';
 import TripPointView from '../view/trip-point.js';
 import TripEditView from '../view/trip-edit-view.js';
 
 export default class PointPresenter {
   #pointListContainer = null;
+  #changeData = null;
 
   #tripPointComponent = null;
   #tripEditComponent = null;
@@ -12,14 +13,18 @@ export default class PointPresenter {
   #destination = null;
   #offers = null;
 
-  constructor(pointListContainer) {
+  constructor(pointListContainer, changeData) {
     this.#pointListContainer = pointListContainer;
+    this.#changeData = changeData;
   }
 
   init = (point, destination, offers) => {
     this.#point = point;
     this.#destination = destination;
     this.#offers = offers;
+
+    const prevTripPointComponent = this.#tripPointComponent;
+    const prevTripEditComponent = this.#tripEditComponent;
 
     this.#tripPointComponent = new TripPointView(point, destination, offers);
     this.#tripEditComponent = new TripEditView(point, destination, offers);
@@ -28,7 +33,26 @@ export default class PointPresenter {
     this.#tripEditComponent.setEditClickHandler(this.#handlePointClick);
     this.#tripEditComponent.setFormSubmitHandler(this.#handleFormSubmit);
 
-    render(this.#tripPointComponent, this.#pointListContainer);
+    if (prevTripPointComponent === null || prevTripEditComponent === null) {
+      render(this.#tripPointComponent, this.#pointListContainer);
+      return;
+    }
+
+    if (this.#pointListContainer.contains(prevTripPointComponent.element)) {
+      replace(this.#tripPointComponent, prevTripPointComponent);
+    }
+
+    if (this.#pointListContainer.contains(prevTripEditComponent.element)) {
+      replace(this.#tripEditComponent, prevTripEditComponent);
+    }
+
+    remove(prevTripPointComponent);
+    remove(prevTripEditComponent);
+  };
+
+  destroy = () => {
+    remove(this.#tripPointComponent);
+    remove(this.#tripEditComponent);
   };
 
   #replaceCardToForm = () => {
@@ -56,7 +80,8 @@ export default class PointPresenter {
     this.#replaceFormToCard();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (point) => {
+    this.#changeData(point);
     this.#replaceFormToCard();
   };
 }
