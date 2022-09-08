@@ -18,6 +18,7 @@ export default class BoardPresenter {
   #boardPoints = [];
   #boardDestination = [];
   #boardOffers = [];
+  #complatedPoints = [];
   #pointPresenter = new Map();
   #currentSortType = SortType.DAY;
   #sourcedBoardPoints = [];
@@ -32,13 +33,30 @@ export default class BoardPresenter {
     this.#boardDestination = [...this.#pointsModel.destination];
     this.#boardOffers = [...this.#pointsModel.offers];
 
+    this.#complatedPoints = this.#buildPoints(this.#boardPoints);
+
     this.#sourcedBoardPoints = [...this.#pointsModel.points];
 
     this.#renderBoard();
   };
 
+  #buildPoints = (points) => {
+    const complatedPoints = [];
+    points.forEach((point) => {
+      const destination = this.#boardDestination.find(
+        (item) => item.id === point.destination
+      );
+      const offers = this.#boardOffers.filter(
+        (item) => point.offers.some((offerId) => offerId === item.id)
+      );
+
+      complatedPoints.push({ ...point, destination, offers });
+    });
+    return complatedPoints;
+  };
+
   #handlePointChange = (updatedPoint) => {
-    this.#boardPoints = updateItem(this.#boardPoints, updatedPoint);
+    this.#complatedPoints = updateItem(this.#complatedPoints, updatedPoint);
     this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
     this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
   };
@@ -50,23 +68,14 @@ export default class BoardPresenter {
     );
   };
 
-  #renderPoint = (point, destination, offers) => {
+  #renderPoint = (point) => {
     const pointPresenter = new PointPresenter(this.#pointListContainer.element, this.#handlePointChange, this.#handleModeChange);
-    pointPresenter.init(point, destination, offers);
+    pointPresenter.init(point);
     this.#pointPresenter.set(point.id, pointPresenter);
   };
 
   #renderPoints = () => {
-    this.#boardPoints.forEach((point) => {
-      const destination = this.#boardDestination.find(
-        (item) => item.id === point.destination
-      );
-      const offers = this.#boardOffers.filter(
-        (item) => point.offers.some((offerId) => offerId === item.id)
-      );
-
-      this.#renderPoint(point, destination, offers);
-    });
+    this.#complatedPoints.forEach((point) => this.#renderPoint(point));
   };
 
   #clearPoints = () => {

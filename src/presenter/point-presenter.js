@@ -9,33 +9,33 @@ const Mode = {
 
 export default class PointPresenter {
   #pointListContainer = null;
-  #changeData = null;
+
+  #changePoint = null;
+
   #changeMode = null;
 
   #tripPointComponent = null;
   #tripEditComponent = null;
 
   #point = null;
-  #destination = null;
-  #offers = null;
   #mode = Mode.DEFAULT;
 
-  constructor(pointListContainer, changeData, changeMode) {
+  constructor(pointListContainer, changePoint, changeMode) {
     this.#pointListContainer = pointListContainer;
-    this.#changeData = changeData;
+
+    this.#changePoint = changePoint;
+
     this.#changeMode = changeMode;
   }
 
-  init = (point, destination, offers) => {
+  init = (point) => {
     this.#point = point;
-    this.#destination = destination;
-    this.#offers = offers;
 
     const prevTripPointComponent = this.#tripPointComponent;
     const prevTripEditComponent = this.#tripEditComponent;
 
-    this.#tripPointComponent = new TripPointView(point, destination, offers);
-    this.#tripEditComponent = new TripEditView(point, destination, offers);
+    this.#tripPointComponent = new TripPointView(point);
+    this.#tripEditComponent = new TripEditView(point);
 
     this.#tripPointComponent.setEditClickHandler(this.#handleEditClick);
     this.#tripEditComponent.setEditClickHandler(this.#handlePointClick);
@@ -98,7 +98,7 @@ export default class PointPresenter {
   };
 
   #handleFormSubmit = (point) => {
-    this.#changeData(point);
+    this.#changePoint(point);
     this.#replaceFormToCard();
   };
 }

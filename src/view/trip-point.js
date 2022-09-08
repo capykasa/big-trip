@@ -1,8 +1,8 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDateByDays, humanizeDateByYYYYMMDD, humanizeDateByTime } from '../utils/point';
 
-const createTripPointTemplate = (task, destination, offers) => {
-  const { basePrice, dateFrom, dateTo, type } = task;
+const createTripPointTemplate = (point) => {
+  const { basePrice, dateFrom, dateTo, type, destination, offers } = point;
   const { name } = destination;
 
   const dateInDaysFormat = humanizeDateByDays(dateFrom);
@@ -53,18 +53,14 @@ const createTripPointTemplate = (task, destination, offers) => {
 
 export default class TripPointView extends AbstractView {
   #point = null;
-  #destination = null;
-  #offers = null;
 
-  constructor(point, destination, offers) {
+  constructor(point) {
     super();
     this.#point = point;
-    this.#destination = destination;
-    this.#offers = offers;
   }
 
   get template() {
-    return createTripPointTemplate(this.#point, this.#destination, this.#offers);
+    return createTripPointTemplate(this.#point);
   }
 
   setEditClickHandler = (callback) => {
