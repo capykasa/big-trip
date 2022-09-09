@@ -10,13 +10,15 @@ const createTripPointTemplate = (point) => {
   const dateFromInTimeFormat = humanizeDateByTime(dateFrom);
   const dateToInTimeFormat = humanizeDateByTime(dateTo);
 
-  const createOffer = (offer) => (
-    `<li class="event__offer">
-        <span class="event__offer-title">${offer.title}</span>
-        &plus;&euro;&nbsp;
-        <span class="event__offer-price">${offer.price}</span>
-      </li>`
-  );
+  const createOffer = (items) => (
+    items.length > 0
+      ? offers.map((item) => (
+        `<li class="event__offer">
+          <span class="event__offer-title">${item.title}</span>
+          &plus;&euro;&nbsp;
+          <span class="event__offer-price">${item.price}</span>
+        </li>`)).join('')
+      : '');
 
 
   return (
@@ -39,9 +41,7 @@ const createTripPointTemplate = (point) => {
       </p>
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-      ${offers.length > 0
-      ? offers.map((offer) => createOffer(offer))
-      : ''}
+      ${createOffer(offers)}
       </ul>
       <button class="event__rollup-btn" type="button">
         <span class="visually-hidden">Open event</span>

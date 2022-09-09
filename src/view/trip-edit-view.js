@@ -29,7 +29,7 @@ const createTripEditTemplate = (data) => {
           ${event.map((item) => `<div class="event__type-item">
             <input id="event-type-${item}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item}">
             <label class="event__type-label  event__type-label--${item}" for="event-type-${item}-1">${item}</label>
-          </div>`)}
+          </div>`).join('')}
 
         </fieldset>
       </div>
@@ -67,7 +67,7 @@ const createTripEditTemplate = (data) => {
           <span class="event__offer-price">${offer.price}</span>
         </label>
       </div>`
-    )}
+    ).join('')}
     </div>`
   );
 
@@ -200,6 +200,13 @@ export default class TripEditView extends AbstractStatefulView {
     });
   };
 
+  #priceChangeHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({
+      basePrice: evt.target.value,
+    });
+  };
+
   #dateFromChangeHandler = ([userDate]) => {
     this.updateElement({
       dateFrom: userDate,
@@ -250,10 +257,12 @@ export default class TripEditView extends AbstractStatefulView {
   };
 
   #setInnerHandlers = () => {
-    this.element.querySelector('.event__type-item')
+    this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#eventChangeHandler);
     this.element.querySelector('.event__field-group--destination')
       .addEventListener('change', this.#placeChangeHandler);
+    this.element.querySelector('.event__input--price')
+      .addEventListener('change', this.#priceChangeHandler);
   };
 
   static parseTripToState = (point) => (
