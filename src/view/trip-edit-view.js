@@ -1,6 +1,9 @@
 import { places, typesOfEvents } from '../const';
 import { humanizeDateByDDMMYY, humanizeDateByTime } from '../utils/point';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 const createTripEditTemplate = (data) => {
   const { basePrice, dateFrom, dateTo, type, destination, offers } = data;
@@ -12,16 +15,24 @@ const createTripEditTemplate = (data) => {
   const dateToInTimeFormat = humanizeDateByTime(dateTo);
 
   const createEventType = (event) => (
-    `<div class="event__type-list">
-      <fieldset class="event__type-group">
-        <legend class="visually-hidden">Event type</legend>
+    `<div class="event__type-wrapper">
+      <label class="event__type  event__type-btn" for="event-type-toggle-1">
+        <span class="visually-hidden">Choose event type</span>
+        <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+      </label>
+      <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-        ${event.map((item) => `<div class="event__type-item">
-          <input id="event-type-${item}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item}">
-          <label class="event__type-label  event__type-label--${item}" for="event-type-${item}-1">${item}</label>
-        </div>`)}
+      <div class="event__type-list">
+        <fieldset class="event__type-group">
+          <legend class="visually-hidden">Event type</legend>
 
-      </fieldset>
+          ${event.map((item) => `<div class="event__type-item">
+            <input id="event-type-${item}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item}">
+            <label class="event__type-label  event__type-label--${item}" for="event-type-${item}-1">${item}</label>
+          </div>`)}
+
+        </fieldset>
+      </div>
     </div>`
   );
 
@@ -65,13 +76,6 @@ const createTripEditTemplate = (data) => {
     `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
-
-          <div class="event__type-wrapper">
-            <label class="event__type  event__type-btn" for="event-type-toggle-1">
-              <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
-            </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
             ${createEventType(typesOfEvents)}
 
@@ -141,16 +145,26 @@ const createTripEditTemplate = (data) => {
 };
 
 export default class TripEditView extends AbstractStatefulView {
+  #datepicker = null;
+
   constructor(point) {
     super();
     this._state = TripEditView.parseTripToState(point);
 
     this.#setInnerHandlers();
+    this.#setFromDatepicker();
+    this.#setToDatepicker();
   }
 
   get template() {
     return createTripEditTemplate(this._state);
   }
+
+  reset = (point) => {
+    this.updateElement(
+      TripEditView.parseTripToState(point),
+    );
+  };
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
@@ -164,6 +178,8 @@ export default class TripEditView extends AbstractStatefulView {
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
+    this.#setFromDatepicker();
+    this.#setToDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setEditClickHandler(this._callback.editClick);
   };
@@ -184,6 +200,18 @@ export default class TripEditView extends AbstractStatefulView {
     });
   };
 
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate,
+    });
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate,
+    });
+  };
+
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this._callback.formSubmit(TripEditView.parseStateToTrip(this._state));
@@ -192,6 +220,33 @@ export default class TripEditView extends AbstractStatefulView {
   #editClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.editClick(TripEditView.parseStateToTrip(this._state));
+  };
+
+  #setFromDatepicker = () => {
+    this.#datepicker = flatpickr(
+      this.element.querySelector('input[name="event-start-time"]'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        'time_24hr': true,
+        defaultDate: this._state.dateFrom,
+        onChange: this.#dateFromChangeHandler,
+      },
+    );
+  };
+
+  #setToDatepicker = () => {
+    this.#datepicker = flatpickr(
+      this.element.querySelector('input[name="event-end-time"]'),
+      {
+        dateFormat: 'd/m/y H:i',
+        enableTime: true,
+        'time_24hr': true,
+        defaultDate: this._state.dateTo,
+        minDate: this._state.dateFrom,
+        onChange: this.#dateToChangeHandler,
+      },
+    );
   };
 
   #setInnerHandlers = () => {
