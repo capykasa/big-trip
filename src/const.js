@@ -1,6 +1,6 @@
 const typesOfEvents = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const destinations = ['Amsterdam', 'Geneva', 'Chamonix'];
+const places = ['Amsterdam', 'Geneva', 'Chamonix'];
 
 const listEmpty = {
   EVERTHING: 'Click New Event to create your first point',
@@ -23,7 +23,7 @@ const SortType = {
 
 export {
   typesOfEvents,
-  destinations,
+  places,
   listEmpty,
   FilterType,
   SortType
