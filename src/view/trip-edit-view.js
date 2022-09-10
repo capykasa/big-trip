@@ -51,7 +51,7 @@ const createTripEditTemplate = (data) => {
         list="destination-list-1"
       >
       <datalist id="destination-list-1">
-        ${places.map((item) => `<option value="${item}" ${selectedCity === item ? 'select' : ''}></option>`)}
+        ${places.map((item) => `<option value="${item}" ${selectedCity === item ? 'selected' : ''}>${item}</option>`).join('')}
       </datalist>
     </div>`
   );
