@@ -1,21 +1,10 @@
-import { generateDestination } from '../mock/destination.js';
-import { generateOffers } from '../mock/offers.js';
+import Observable from '../framework/observable.js';
 import { generatePoint } from '../mock/point.js';
 
-export default class PointsModel {
+export default class PointsModel extends Observable {
   #points = Array.from({ length: 30 }, generatePoint);
-  #destination = generateDestination();
-  #offers = generateOffers();
 
-  get points() {
+  getPoints() {
     return this.#points;
-  }
-
-  get destination() {
-    return this.#destination;
-  }
-
-  get offers() {
-    return this.#offers;
   }
 }

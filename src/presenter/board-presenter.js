@@ -10,32 +10,43 @@ import PointPresenter from './point-presenter.js';
 export default class BoardPresenter {
   #boardContainer = null;
   #pointsModel = null;
+  #destinationModel = null;
+  #offersModel = null;
 
   #pointListContainer = new TripEventsListView();
   #listEmptyComponent = new ListEmptyView();
   #tripSortComponent = new TripSortView();
 
   #boardPoints = [];
-  #boardDestination = [];
-  #boardOffers = [];
   #complatedPoints = [];
   #pointPresenter = new Map();
   #currentSortType = SortType.DAY;
   #sourcedBoardPoints = [];
 
-  constructor(boardContainer, pointsModel) {
+  constructor(boardContainer, pointsModel, destinationModel, offersModel) {
     this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
+    this.#destinationModel = destinationModel;
+    this.#offersModel = offersModel;
+  }
+
+  get points() {
+    const complatedPoints = [];
+    this.#pointsModel.points.forEach((point) => {
+      const destination = this.#destinationModel.getDestination(point.destination);
+      const offers = this.#offersModel.getOffers(point.offers);
+
+      complatedPoints.push({ ...point, destination, offers });
+    });
+    return complatedPoints;
   }
 
   init = () => {
-    this.#boardPoints = [...this.#pointsModel.points];
-    this.#boardDestination = [...this.#pointsModel.destination];
-    this.#boardOffers = [...this.#pointsModel.offers];
+    this.#boardPoints = [...this.#pointsModel.getPoints()];
 
     this.#complatedPoints = this.#buildPoints(this.#boardPoints);
 
-    this.#sourcedBoardPoints = [...this.#pointsModel.points];
+    this.#sourcedBoardPoints = [...this.#pointsModel.getPoints()];
 
     this.#renderBoard();
   };
@@ -43,12 +54,8 @@ export default class BoardPresenter {
   #buildPoints = (points) => {
     const complatedPoints = [];
     points.forEach((point) => {
-      const destination = this.#boardDestination.find(
-        (item) => item.id === point.destination
-      );
-      const offers = this.#boardOffers.filter(
-        (item) => point.offers.some((offerId) => offerId === item.id)
-      );
+      const destination = this.#destinationModel.getDestination(point.destination);
+      const offers = this.#offersModel.getOffers(point.offers);
 
       complatedPoints.push({ ...point, destination, offers });
     });
