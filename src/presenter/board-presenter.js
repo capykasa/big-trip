@@ -1,6 +1,5 @@
 import { SortType } from '../const.js';
 import { render, RenderPosition } from '../framework/render.js';
-import { updateItem } from '../utils/common.js';
 import { sortByDate, sortByPrice } from '../utils/point.js';
 import ListEmptyView from '../view/list-empty.js';
 import TripEventsListView from '../view/trip-events-list.js';
@@ -17,11 +16,9 @@ export default class BoardPresenter {
   #listEmptyComponent = new ListEmptyView();
   #tripSortComponent = new TripSortView();
 
-  #boardPoints = [];
   #complatedPoints = [];
   #pointPresenter = new Map();
   #currentSortType = SortType.DAY;
-  #sourcedBoardPoints = [];
 
   constructor(boardContainer, pointsModel, destinationModel, offersModel) {
     this.#boardContainer = boardContainer;
@@ -32,47 +29,34 @@ export default class BoardPresenter {
 
   get points() {
     const complatedPoints = [];
-    this.#pointsModel.points.forEach((point) => {
+
+    this.#pointsModel.getPoints().forEach((point) => {
       const destination = this.#destinationModel.getDestination(point.destination);
       const offers = this.#offersModel.getOffers(point.offers);
 
       complatedPoints.push({ ...point, destination, offers });
     });
+
+    switch (this.#currentSortType) {
+      case SortType.DAY:
+        return [...complatedPoints].sort(sortByDate);
+      case SortType.PRICE:
+        return [...complatedPoints].sort(sortByPrice);
+    }
+
     return complatedPoints;
   }
 
   init = () => {
-    this.#boardPoints = [...this.#pointsModel.getPoints()];
-
-    this.#complatedPoints = this.#buildPoints(this.#boardPoints);
-
-    this.#sourcedBoardPoints = [...this.#pointsModel.getPoints()];
-
     this.#renderBoard();
   };
 
-  #buildPoints = (points) => {
-    const complatedPoints = [];
-    points.forEach((point) => {
-      const destination = this.#destinationModel.getDestination(point.destination);
-      const offers = this.#offersModel.getOffers(point.offers);
-
-      complatedPoints.push({ ...point, destination, offers });
-    });
-    return complatedPoints;
-  };
-
   #handlePointChange = (updatedPoint) => {
-    this.#complatedPoints = updateItem(this.#complatedPoints, updatedPoint);
-    this.#sourcedBoardPoints = updateItem(this.#sourcedBoardPoints, updatedPoint);
     this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
   };
 
   #handleModeChange = () => {
-    this.#pointPresenter.forEach((presenter) => {
-      presenter.resetView();
-    }
-    );
+    this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
   #renderPoint = (point) => {
@@ -82,7 +66,7 @@ export default class BoardPresenter {
   };
 
   #renderPoints = () => {
-    this.#complatedPoints.forEach((point) => this.#renderPoint(point));
+    this.points.forEach((point) => this.#renderPoint(point));
   };
 
   #clearPoints = () => {
@@ -90,27 +74,12 @@ export default class BoardPresenter {
     this.#pointPresenter.clear();
   };
 
-  #sortTasks = (sortType) => {
-    switch (sortType) {
-      case SortType.DAY:
-        this.#boardPoints.sort(sortByDate);
-        break;
-      case SortType.PRICE:
-        this.#boardPoints.sort(sortByPrice);
-        break;
-      default:
-        this.#boardPoints = [...this.#sourcedBoardPoints];
-    }
-
-    this.#currentSortType = sortType;
-  };
-
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
     }
 
-    this.#sortTasks(sortType);
+    this.#currentSortType = sortType;
     this.#clearPoints();
     this.#renderPoints();
   };
@@ -127,7 +96,7 @@ export default class BoardPresenter {
   #renderBoard = () => {
     render(this.#pointListContainer, this.#boardContainer);
 
-    if (this.#boardPoints.length === 0) {
+    if (this.points.length === 0) {
       this.#renderListEmpty();
       return;
     }
