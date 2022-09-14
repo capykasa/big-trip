@@ -1,11 +1,11 @@
-import { SortType, UpdateType, UserAction } from '../const.js';
 import { remove, render, RenderPosition } from '../framework/render.js';
-import { sortByDate, sortByPrice } from '../utils/point.js';
-import { filter } from '../utils/filter.js';
 import ListEmptyView from '../view/list-empty.js';
 import TripEventsListView from '../view/trip-events-list.js';
 import TripSortView from '../view/trip-sort-view.js';
 import PointPresenter from './point-presenter.js';
+import { sortByDate, sortByPrice } from '../utils/point.js';
+import { filter } from '../utils/filter.js';
+import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 
 export default class BoardPresenter {
   #boardContainer = null;
@@ -13,11 +13,12 @@ export default class BoardPresenter {
   #filterModel = null;
 
   #pointListContainer = new TripEventsListView();
-  #listEmptyComponent = new ListEmptyView();
+  #listEmptyComponent = null;
   #tripSortComponent = null;
 
   #pointPresenter = new Map();
   #currentSortType = SortType.DAY;
+  #filterType = FilterType.EVERYTHING;
 
   constructor(boardContainer, pointsModel, filterModel) {
     this.#boardContainer = boardContainer;
@@ -29,9 +30,9 @@ export default class BoardPresenter {
   }
 
   get points() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.getPoints();
-    const filteredPoints = filter[filterType](points);
+    const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
       case SortType.DAY:
@@ -108,6 +109,7 @@ export default class BoardPresenter {
   };
 
   #renderListEmpty = () => {
+    this.#listEmptyComponent = new ListEmptyView(this.#filterType);
     render(this.#listEmptyComponent, this.#boardContainer, RenderPosition.AFTERBEGIN);
   };
 

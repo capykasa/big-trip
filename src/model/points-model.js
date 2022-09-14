@@ -7,7 +7,7 @@ export default class PointsModel extends Observable {
   #destinationModel = new DestinationModel();
   #offersModel = new OffersModel();
 
-  #points = Array.from({ length: 30 }, generatePoint);
+  #points = Array.from({ length: 3 }, generatePoint);
   #collectedPoints = [];
 
   getPoints() {
