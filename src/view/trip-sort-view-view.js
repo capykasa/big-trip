@@ -39,7 +39,7 @@ export default class TripSortView extends AbstractView {
   }
 
   get template() {
-    return createTripSortTemplate(/* this.#currentSortType */);
+    return createTripSortTemplate(this.#currentSortType);
   }
 
   setSortTypeChangeHandler = (callback) => {

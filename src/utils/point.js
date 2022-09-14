@@ -35,6 +35,8 @@ const sortByPrice = (pointA, pointB) => {
   return weight ?? dayjs(pointA.basePrice).diff(dayjs(pointB.basePrice));
 };
 
+const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+
 export {
   humanizeDateByDays,
   humanizeDateByYYYYMMDD,
@@ -42,5 +44,6 @@ export {
   humanizeDateByTime,
   isFuturePoint,
   sortByDate,
-  sortByPrice
+  sortByPrice,
+  isDatesEqual
 };

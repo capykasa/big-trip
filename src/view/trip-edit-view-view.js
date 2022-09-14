@@ -1,9 +1,26 @@
+import he from 'he';
 import { places, typesOfEvents } from '../const';
 import { humanizeDateByDDMMYY, humanizeDateByTime } from '../utils/point';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
+import dayjs from 'dayjs';
+
+const BLANK_POINT = {
+  basePrice: 0,
+  dateFrom: dayjs().$d,
+  dateTo: dayjs().$d,
+  destination: {
+    id: 2,
+    description: '',
+    name: places[0],
+    pictures: []
+  },
+  id: 807,
+  offers: [],
+  type: typesOfEvents[0],
+};
 
 const createTripEditTemplate = (data) => {
   const { basePrice, dateFrom, dateTo, type, destination, offers } = data;
@@ -47,7 +64,7 @@ const createTripEditTemplate = (data) => {
         id="event-destination-1"
         type="text"
         name="event-destination"
-        value="${selectedCity}"
+        value="${he.encode(selectedCity)}"
         list="destination-list-1"
       >
       <datalist id="destination-list-1">
@@ -147,7 +164,7 @@ const createTripEditTemplate = (data) => {
 export default class TripEditView extends AbstractStatefulView {
   #datepicker = null;
 
-  constructor(point) {
+  constructor(point = BLANK_POINT) {
     super();
     this._state = TripEditView.parseTripToState(point);
 
@@ -176,12 +193,18 @@ export default class TripEditView extends AbstractStatefulView {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   };
 
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
+  };
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.#setFromDatepicker();
     this.#setToDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setEditClickHandler(this._callback.editClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   };
 
   #eventChangeHandler = (evt) => {
@@ -195,15 +218,15 @@ export default class TripEditView extends AbstractStatefulView {
     evt.preventDefault();
     this.updateElement({
       destination: {
-        name: evt.target.value
-      },
+        name: evt.target.value,
+      }
     });
   };
 
   #priceChangeHandler = (evt) => {
     evt.preventDefault();
     this._setState({
-      basePrice: evt.target.value,
+      basePrice: Number(evt.target.value),
     });
   };
 
@@ -260,9 +283,14 @@ export default class TripEditView extends AbstractStatefulView {
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#eventChangeHandler);
     this.element.querySelector('.event__field-group--destination')
-      .addEventListener('change', this.#placeChangeHandler);
+      .addEventListener('input', this.#placeChangeHandler);
     this.element.querySelector('.event__input--price')
       .addEventListener('change', this.#priceChangeHandler);
+  };
+
+  #formDeleteClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(TripEditView.parseStateToTrip(this._state));
   };
 
   static parseTripToState = (point) => (
