@@ -1,3 +1,4 @@
+import he from 'he';
 import { places, typesOfEvents } from '../const';
 import { humanizeDateByDDMMYY, humanizeDateByTime } from '../utils/point';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
@@ -13,7 +14,7 @@ const BLANK_POINT = {
   destination: {
     id: 2,
     description: '',
-    name: '',
+    name: places[0],
     pictures: []
   },
   id: 807,
@@ -63,7 +64,7 @@ const createTripEditTemplate = (data) => {
         id="event-destination-1"
         type="text"
         name="event-destination"
-        value="${selectedCity}"
+        value="${he.encode(selectedCity)}"
         list="destination-list-1"
       >
       <datalist id="destination-list-1">
@@ -217,8 +218,8 @@ export default class TripEditView extends AbstractStatefulView {
     evt.preventDefault();
     this.updateElement({
       destination: {
-        name: evt.target.value
-      },
+        name: evt.target.value,
+      }
     });
   };
 
@@ -282,7 +283,7 @@ export default class TripEditView extends AbstractStatefulView {
     this.element.querySelector('.event__type-group')
       .addEventListener('change', this.#eventChangeHandler);
     this.element.querySelector('.event__field-group--destination')
-      .addEventListener('change', this.#placeChangeHandler);
+      .addEventListener('input', this.#placeChangeHandler);
     this.element.querySelector('.event__input--price')
       .addEventListener('change', this.#priceChangeHandler);
   };
