@@ -4,6 +4,22 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
+import dayjs from 'dayjs';
+
+const BLANK_POINT = {
+  basePrice: 0,
+  dateFrom: dayjs().$d,
+  dateTo: dayjs().$d,
+  destination: {
+    id: 2,
+    description: '',
+    name: '',
+    pictures: []
+  },
+  id: 807,
+  offers: [],
+  type: typesOfEvents[0],
+};
 
 const createTripEditTemplate = (data) => {
   const { basePrice, dateFrom, dateTo, type, destination, offers } = data;
@@ -147,7 +163,7 @@ const createTripEditTemplate = (data) => {
 export default class TripEditView extends AbstractStatefulView {
   #datepicker = null;
 
-  constructor(point) {
+  constructor(point = BLANK_POINT) {
     super();
     this._state = TripEditView.parseTripToState(point);
 

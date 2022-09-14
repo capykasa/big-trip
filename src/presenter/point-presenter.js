@@ -1,6 +1,6 @@
 import { remove, render, replace } from '../framework/render.js';
-import TripPointView from '../view/trip-point.js';
-import TripEditView from '../view/trip-edit-view.js';
+import TripPointView from '../view/trip-point-view.js';
+import TripEditView from '../view/trip-edit-view-view.js';
 import { UpdateType, UserAction } from '../const.js';
 import { isDatesEqual } from '../utils/point.js';
 
@@ -11,11 +11,8 @@ const Mode = {
 
 export default class PointPresenter {
   #pointListContainer = null;
-
   #changeData = null;
-
   #changeMode = null;
-
   #tripPointComponent = null;
   #tripEditComponent = null;
 
