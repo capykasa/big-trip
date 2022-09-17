@@ -1,27 +1,44 @@
 import Observable from '../framework/observable.js';
-import DestinationModel from './destination-model.js';
-import OffersModel from './offers-model.js';
-import { generatePoint } from '../mock/point.js';
+import { UpdateType } from '../const.js';
 
 export default class PointsModel extends Observable {
-  #destinationModel = new DestinationModel();
-  #offersModel = new OffersModel();
-
-  #points = Array.from({ length: 30 }, generatePoint);
+  #pointsApiService = null;
+  #points = [];
+  #destinations = [];
+  #offers = [];
   #collectedPoints = [];
 
-  getPoints() {
-    if (this.#collectedPoints.length === 0) {
-      this.#points.forEach((point) => {
-        const destination = this.#destinationModel.getDestination(point.destination);
-        const offers = this.#offersModel.getOffers(point.offers);
+  constructor(pointsApiService) {
+    super();
+    this.#pointsApiService = pointsApiService;
+  }
 
-        this.#collectedPoints.push({ ...point, destination, offers });
-      });
+  get points() {
+    return this.#points;
+  }
+
+  get destinations() {
+    return this.#destinations;
+  }
+
+  get offers() {
+    return this.#offers;
+  }
+
+  init = async () => {
+    try {
+      const points = await this.#pointsApiService.points;
+      this.#points = points.map(this.#adaptToClient);
+      this.#destinations = await this.#pointsApiService.destinations;
+      this.#offers = await this.#pointsApiService.offers;
+    } catch (err) {
+      this.#points = [];
+      this.#destinations = [];
+      this.#offers = [];
     }
 
-    return this.#collectedPoints;
-  }
+    this._notify(UpdateType.INIT);
+  };
 
   updatePoint = (updateType, update) => {
     const index = this.#collectedPoints.findIndex((point) => point.id === update.id);
@@ -61,5 +78,22 @@ export default class PointsModel extends Observable {
     ];
 
     this._notify(updateType);
+  };
+
+  #adaptToClient = (point) => {
+    const adaptedPoint = {
+      ...point,
+      dateFrom: point['date_from'] !== null ? new Date(point['date_from']) : point['date_from'],
+      dateTo: point['date_to'] !== null ? new Date(point['date_to']) : point['date_to'],
+      basePrice: point['base_price'],
+      isFavorite: point['is_favorite']
+    };
+
+    delete adaptedPoint['date_from'];
+    delete adaptedPoint['date_to'];
+    delete adaptedPoint['base_price'];
+    delete adaptedPoint['is_favorite'];
+
+    return adaptedPoint;
   };
 }

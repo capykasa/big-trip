@@ -1,5 +1,5 @@
 import { remove, render, RenderPosition } from '../framework/render.js';
-import TripEditView from '../view/trip-edit-view-view.js';
+import TripEditView from '../view/trip-edit-view.js';
 import { UpdateType, UserAction } from '../const.js';
 import { getRandomInteger } from '../utils/common.js';
 

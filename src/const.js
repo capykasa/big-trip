@@ -4,7 +4,7 @@ const places = ['Amsterdam', 'Geneva', 'Chamonix'];
 
 const FilterType = {
   EVERYTHING: 'Everything',
-  FUTURE: 'Future'
+  FUTURE: 'Future',
 };
 
 const SortType = {
@@ -12,7 +12,7 @@ const SortType = {
   EVENT: 'event',
   TIME: 'time',
   PRICE: 'price',
-  OFFERS: 'offers'
+  OFFERS: 'offers',
 };
 
 const UserAction = {
@@ -25,6 +25,7 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 export {
@@ -33,5 +34,5 @@ export {
   FilterType,
   SortType,
   UserAction,
-  UpdateType
+  UpdateType,
 };
