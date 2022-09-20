@@ -69,19 +69,6 @@ export default class BoardPresenter {
     this.#pointNewPresenter.init(callback);
   };
 
-  #buildPoints = (points, destinations) => {
-    const collectedPoints = [];
-    points.forEach((point) => {
-      const destination = destinations.find(
-        (item) => item.id === point.destination
-      );
-
-      collectedPoints.push({ ...point, destination });
-    });
-
-    return collectedPoints;
-  };
-
   #handleViewAction = (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
@@ -122,16 +109,14 @@ export default class BoardPresenter {
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #renderPoint = (point, offers) => {
+  #renderPoint = (point, destinations, offers) => {
     const pointPresenter = new PointPresenter(this.#pointListContainer.element, this.#handleViewAction, this.#handleModeChange);
-    pointPresenter.init(point, offers);
+    pointPresenter.init(point, destinations, offers);
     this.#pointPresenter.set(point.id, pointPresenter);
   };
 
   #renderPoints = (points, destinations, offers) => {
-    const collectedPoints = this.#buildPoints(points, destinations);
-
-    collectedPoints.forEach((point) => this.#renderPoint(point, offers));
+    points.forEach((point) => this.#renderPoint(point, destinations, offers));
   };
 
   #handleSortTypeChange = (sortType) => {

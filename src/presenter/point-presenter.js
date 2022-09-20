@@ -17,6 +17,7 @@ export default class PointPresenter {
   #tripEditComponent = null;
 
   #point = null;
+  #destinations = null;
   #offers = null;
   #mode = Mode.DEFAULT;
 
@@ -28,17 +29,16 @@ export default class PointPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (point, offers) => {
+  init = (point, destinations, offers) => {
     this.#point = point;
+    this.#destinations = destinations;
     this.#offers = offers;
 
     const prevTripPointComponent = this.#tripPointComponent;
     const prevTripEditComponent = this.#tripEditComponent;
 
-    // Можно создать отдельное вью для destination и там менять стейт
-
-    this.#tripPointComponent = new TripPointView(point, offers);
-    this.#tripEditComponent = new TripEditView(point, offers);
+    this.#tripPointComponent = new TripPointView(point, destinations, offers);
+    this.#tripEditComponent = new TripEditView(point, destinations, offers);
 
     this.#tripPointComponent.setEditClickHandler(this.#handleEditClick);
     this.#tripEditComponent.setEditClickHandler(this.#handlePointClick);
@@ -100,6 +100,7 @@ export default class PointPresenter {
   };
 
   #handlePointClick = () => {
+    this.#tripEditComponent.reset(this.#point);
     this.#replaceFormToCard();
   };
 

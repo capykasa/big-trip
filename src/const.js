@@ -1,7 +1,5 @@
 const typesOfEvents = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const places = ['Amsterdam', 'Geneva', 'Chamonix'];
-
 const FilterType = {
   EVERYTHING: 'Everything',
   FUTURE: 'Future',
@@ -30,7 +28,6 @@ const UpdateType = {
 
 export {
   typesOfEvents,
-  places,
   FilterType,
   SortType,
   UserAction,

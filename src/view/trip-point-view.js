@@ -1,9 +1,9 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { humanizeDateByDays, humanizeDateByYYYYMMDD, humanizeDateByTime, getOffersByType, getCurrentOffers } from '../utils/point';
 
-const createTripPointTemplate = (point, allOffers) => {
+const createTripPointTemplate = (point, allDestinations, allOffers) => {
   const { basePrice, dateFrom, dateTo, type, destination, offers } = point;
-  const { name } = destination;
+  const currentDestination = allDestinations.find((item) => item.id === destination);
 
   const offersByType = getOffersByType(allOffers, type);
   const currentOffers = getCurrentOffers(offersByType.offers, offers);
@@ -28,7 +28,7 @@ const createTripPointTemplate = (point, allOffers) => {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${name}</h3>
+      <h3 class="event__title">${type} ${currentDestination.name}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${dateFrom}">${dateFromInTimeFormat}</time>
@@ -53,16 +53,18 @@ const createTripPointTemplate = (point, allOffers) => {
 
 export default class TripPointView extends AbstractView {
   #point = null;
+  #allDestinations = null;
   #allOffers = null;
 
-  constructor(point, allOffers) {
+  constructor(point, allDestinations, allOffers) {
     super();
     this.#point = point;
+    this.#allDestinations = allDestinations;
     this.#allOffers = allOffers;
   }
 
   get template() {
-    return createTripPointTemplate(this.#point, this.#allOffers);
+    return createTripPointTemplate(this.#point, this.#allDestinations, this.#allOffers);
   }
 
   setEditClickHandler = (callback) => {
