@@ -1,6 +1,6 @@
 import he from 'he';
 import { places, typesOfEvents } from '../const';
-import { getOffersByType, humanizeDateByDDMMYY, humanizeDateByTime } from '../utils/point';
+import { getLastWord, getOffersByType, humanizeDateByDDMMYY, humanizeDateByTime } from '../utils/point';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 
@@ -80,12 +80,13 @@ const createTripEditTemplate = (data, allOffers) => {
       `<div class="event__offer-selector">
         <input
           class="event__offer-checkbox  visually-hidden"
-          id="event-offer-${offer.title}-1"
+          id="event-offer-${getLastWord(offer.title)}-${offer.id}"
           type="checkbox"
           name="event-offer-${offer.title}"
           ${offers.includes(offer.id) ? 'checked' : ''}
+          data-id-offer="${offer.id}"
         >
-        <label class="event__offer-label" for="event-offer-${offer.title}-1">
+        <label class="event__offer-label" for="event-offer-${getLastWord(offer.title)}-${offer.id}">
           <span class="event__offer-title">Add ${offer.title}</span>
             &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
@@ -240,6 +241,20 @@ export default class TripEditView extends AbstractStatefulView {
     });
   };
 
+  #offerChangeHandler = (evt) => {
+    evt.preventDefault();
+    const newOffers = this._state.offers.slice();
+    const idOffer = Number(evt.target.dataset.idOffer);
+    if (evt.target.checked) {
+      newOffers.push(idOffer);
+    } else {
+      newOffers.splice(newOffers.indexOf(idOffer), 1);
+    }
+    this.updateElement({
+      offers: newOffers,
+    });
+  };
+
   #dateFromChangeHandler = ([userDate]) => {
     this.updateElement({
       dateFrom: userDate,
@@ -296,6 +311,8 @@ export default class TripEditView extends AbstractStatefulView {
       .addEventListener('input', this.#placeChangeHandler);
     this.element.querySelector('.event__input--price')
       .addEventListener('change', this.#priceChangeHandler);
+    this.element.querySelector('.event__available-offers')
+      .addEventListener('change', this.#offerChangeHandler);
   };
 
   #formDeleteClickHandler = (evt) => {

@@ -7,6 +7,11 @@ const humanizeDateByTime = (dueDate) => dayjs(dueDate).format('H:mm');
 
 const isFuturePoint = (dueDate) => dueDate && dayjs().isBefore(dueDate, 'm');
 
+const getLastWord = (text) => {
+  const wordsArray = text.split(' ');
+  return wordsArray[wordsArray.length - 1];
+};
+
 const getWeightForSort = (itemA, itemB) => {
   if (itemA === null && itemB === null) {
     return 0;
@@ -47,6 +52,7 @@ export {
   humanizeDateByDDMMYY,
   humanizeDateByTime,
   isFuturePoint,
+  getLastWord,
   sortByDate,
   sortByPrice,
   isDatesEqual,
