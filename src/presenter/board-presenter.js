@@ -38,8 +38,7 @@ export default class BoardPresenter {
 
   get points() {
     this.#filterType = this.#filterModel.filter;
-
-    const points = this.#buildPoints(this.#pointsModel.points, this.#pointsModel.destinations, this.#pointsModel.offers);
+    const points = this.#pointsModel.points;
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
@@ -52,6 +51,14 @@ export default class BoardPresenter {
     return filteredPoints;
   }
 
+  get destinations() {
+    return this.#pointsModel.destinations;
+  }
+
+  get offers() {
+    return this.#pointsModel.offers;
+  }
+
   init = () => {
     this.#renderBoard();
   };
@@ -62,17 +69,14 @@ export default class BoardPresenter {
     this.#pointNewPresenter.init(callback);
   };
 
-  #buildPoints = (points, destinations, offers) => {
+  #buildPoints = (points, destinations) => {
     const collectedPoints = [];
     points.forEach((point) => {
       const destination = destinations.find(
         (item) => item.id === point.destination
       );
-      const currentOffers = offers.filter(
-        (item) => point.offers.some((offerId) => offerId === item.id)
-      );
 
-      collectedPoints.push({ ...point, destination, currentOffers });
+      collectedPoints.push({ ...point, destination });
     });
 
     return collectedPoints;
@@ -118,14 +122,16 @@ export default class BoardPresenter {
     this.#pointPresenter.forEach((presenter) => presenter.resetView());
   };
 
-  #renderPoint = (point) => {
+  #renderPoint = (point, offers) => {
     const pointPresenter = new PointPresenter(this.#pointListContainer.element, this.#handleViewAction, this.#handleModeChange);
-    pointPresenter.init(point);
+    pointPresenter.init(point, offers);
     this.#pointPresenter.set(point.id, pointPresenter);
   };
 
-  #renderPoints = (points) => {
-    points.forEach((point) => this.#renderPoint(point));
+  #renderPoints = (points, destinations, offers) => {
+    const collectedPoints = this.#buildPoints(points, destinations);
+
+    collectedPoints.forEach((point) => this.#renderPoint(point, offers));
   };
 
   #handleSortTypeChange = (sortType) => {
@@ -177,6 +183,8 @@ export default class BoardPresenter {
     }
 
     const points = this.points;
+    const destinations = this.destinations;
+    const offers = this.offers;
 
     if (this.points.length === 0) {
       this.#renderListEmpty();
@@ -184,6 +192,6 @@ export default class BoardPresenter {
     }
 
     this.#renderSort();
-    this.#renderPoints(points);
+    this.#renderPoints(points, destinations, offers);
   };
 }

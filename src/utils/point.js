@@ -37,6 +37,10 @@ const sortByPrice = (pointA, pointB) => {
 
 const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
 
+const getOffersByType = (offers, type) => offers.find((item) => item.type === type);
+
+const getCurrentOffers = (offersByType, currentOffersId) => offersByType.filter((item) => currentOffersId.includes(item.id));
+
 export {
   humanizeDateByDays,
   humanizeDateByYYYYMMDD,
@@ -45,5 +49,7 @@ export {
   isFuturePoint,
   sortByDate,
   sortByPrice,
-  isDatesEqual
+  isDatesEqual,
+  getOffersByType,
+  getCurrentOffers,
 };

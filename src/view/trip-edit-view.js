@@ -1,6 +1,6 @@
 import he from 'he';
 import { places, typesOfEvents } from '../const';
-import { humanizeDateByDDMMYY, humanizeDateByTime } from '../utils/point';
+import { getOffersByType, humanizeDateByDDMMYY, humanizeDateByTime } from '../utils/point';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 
@@ -22,10 +22,11 @@ const BLANK_POINT = {
   type: typesOfEvents[0],
 };
 
-const createTripEditTemplate = (data) => {
+const createTripEditTemplate = (data, allOffers) => {
   const { basePrice, dateFrom, dateTo, type, destination, offers } = data;
   const { description, name, pictures } = destination;
 
+  const offersByType = getOffersByType(allOffers, type);
   const dateFromDDMMYYFormat = humanizeDateByDDMMYY(dateFrom);
   const dateToDDMMYYFormat = humanizeDateByDDMMYY(dateTo);
   const dateFromInTimeFormat = humanizeDateByTime(dateFrom);
@@ -77,10 +78,16 @@ const createTripEditTemplate = (data) => {
     `<div class="event__available-offers">
     ${items.map((offer) =>
       `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-1" type="checkbox" name="event-offer-${offer.title}" checked>
+        <input
+          class="event__offer-checkbox  visually-hidden"
+          id="event-offer-${offer.title}-1"
+          type="checkbox"
+          name="event-offer-${offer.title}"
+          ${offers.includes(offer.id) ? 'checked' : ''}
+        >
         <label class="event__offer-label" for="event-offer-${offer.title}-1">
           <span class="event__offer-title">Add ${offer.title}</span>
-          &plus;&euro;&nbsp;
+            &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
         </label>
       </div>`
@@ -141,7 +148,7 @@ const createTripEditTemplate = (data) => {
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
-              ${createOffers(offers)}
+              ${createOffers(offersByType.offers)}
 
           </section>
 
@@ -163,9 +170,11 @@ const createTripEditTemplate = (data) => {
 
 export default class TripEditView extends AbstractStatefulView {
   #datepicker = null;
+  #allOffers = null;
 
-  constructor(point = BLANK_POINT) {
+  constructor(point = BLANK_POINT, allOffers) {
     super();
+    this.#allOffers = allOffers;
     this._state = TripEditView.parseTripToState(point);
 
     this.#setInnerHandlers();
@@ -174,7 +183,7 @@ export default class TripEditView extends AbstractStatefulView {
   }
 
   get template() {
-    return createTripEditTemplate(this._state);
+    return createTripEditTemplate(this._state, this.#allOffers);
   }
 
   reset = (point) => {
@@ -211,6 +220,7 @@ export default class TripEditView extends AbstractStatefulView {
     evt.preventDefault();
     this.updateElement({
       type: evt.target.value,
+      offers: [],
     });
   };
 
