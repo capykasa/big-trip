@@ -7,6 +7,11 @@ const humanizeDateByTime = (dueDate) => dayjs(dueDate).format('H:mm');
 
 const isFuturePoint = (dueDate) => dueDate && dayjs().isBefore(dueDate, 'm');
 
+const getLastWord = (text) => {
+  const wordsArray = text.split(' ');
+  return wordsArray[wordsArray.length - 1];
+};
+
 const getWeightForSort = (itemA, itemB) => {
   if (itemA === null && itemB === null) {
     return 0;
@@ -37,13 +42,20 @@ const sortByPrice = (pointA, pointB) => {
 
 const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
 
+const getOffersByType = (offers, type) => offers.find((item) => item.type === type);
+
+const getCurrentOffers = (offersByType, currentOffersId) => offersByType.filter((item) => currentOffersId.includes(item.id));
+
 export {
   humanizeDateByDays,
   humanizeDateByYYYYMMDD,
   humanizeDateByDDMMYY,
   humanizeDateByTime,
   isFuturePoint,
+  getLastWord,
   sortByDate,
   sortByPrice,
-  isDatesEqual
+  isDatesEqual,
+  getOffersByType,
+  getCurrentOffers,
 };

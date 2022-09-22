@@ -1,10 +1,21 @@
+import dayjs from 'dayjs';
+
 const typesOfEvents = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-const places = ['Amsterdam', 'Geneva', 'Chamonix'];
+const BLANK_POINT = {
+  basePrice: 0,
+  dateFrom: dayjs().$d,
+  dateTo: dayjs().$d,
+  destination: null,
+  id: null,
+  offers: [],
+  type: typesOfEvents[0],
+  isFavorite: false,
+};
 
 const FilterType = {
   EVERYTHING: 'Everything',
-  FUTURE: 'Future'
+  FUTURE: 'Future',
 };
 
 const SortType = {
@@ -12,7 +23,7 @@ const SortType = {
   EVENT: 'event',
   TIME: 'time',
   PRICE: 'price',
-  OFFERS: 'offers'
+  OFFERS: 'offers',
 };
 
 const UserAction = {
@@ -25,13 +36,14 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 export {
   typesOfEvents,
-  places,
+  BLANK_POINT,
   FilterType,
   SortType,
   UserAction,
-  UpdateType
+  UpdateType,
 };

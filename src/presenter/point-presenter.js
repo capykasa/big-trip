@@ -1,6 +1,6 @@
 import { remove, render, replace } from '../framework/render.js';
 import TripPointView from '../view/trip-point-view.js';
-import TripEditView from '../view/trip-edit-view-view.js';
+import TripEditView from '../view/trip-edit-view.js';
 import { UpdateType, UserAction } from '../const.js';
 import { isDatesEqual } from '../utils/point.js';
 
@@ -17,6 +17,8 @@ export default class PointPresenter {
   #tripEditComponent = null;
 
   #point = null;
+  #destinations = null;
+  #offers = null;
   #mode = Mode.DEFAULT;
 
   constructor(pointListContainer, changeData, changeMode) {
@@ -27,14 +29,16 @@ export default class PointPresenter {
     this.#changeMode = changeMode;
   }
 
-  init = (point) => {
+  init = (point, destinations, offers) => {
     this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
 
     const prevTripPointComponent = this.#tripPointComponent;
     const prevTripEditComponent = this.#tripEditComponent;
 
-    this.#tripPointComponent = new TripPointView(point);
-    this.#tripEditComponent = new TripEditView(point);
+    this.#tripPointComponent = new TripPointView(point, destinations, offers);
+    this.#tripEditComponent = new TripEditView(point, destinations, offers);
 
     this.#tripPointComponent.setEditClickHandler(this.#handleEditClick);
     this.#tripEditComponent.setEditClickHandler(this.#handlePointClick);
@@ -96,6 +100,7 @@ export default class PointPresenter {
   };
 
   #handlePointClick = () => {
+    this.#tripEditComponent.reset(this.#point);
     this.#replaceFormToCard();
   };
 
