@@ -1,7 +1,6 @@
 import { remove, render, RenderPosition } from '../framework/render.js';
 import TripEditView from '../view/trip-edit-view.js';
 import { BLANK_POINT, UpdateType, UserAction } from '../const.js';
-import { getRandomInteger } from '../utils/common.js';
 
 export default class PointNewPresenter {
   #pointListContainer = null;
@@ -53,7 +52,7 @@ export default class PointNewPresenter {
     this.#changeData(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      { id: getRandomInteger(10, 999), ...point },
+      point,
     );
     this.destroy();
   };

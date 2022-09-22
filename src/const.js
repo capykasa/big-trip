@@ -10,6 +10,7 @@ const BLANK_POINT = {
   id: null,
   offers: [],
   type: typesOfEvents[0],
+  isFavorite: false,
 };
 
 const FilterType = {
