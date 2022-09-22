@@ -1,4 +1,16 @@
+import dayjs from 'dayjs';
+
 const typesOfEvents = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+
+const BLANK_POINT = {
+  basePrice: 0,
+  dateFrom: dayjs().$d,
+  dateTo: dayjs().$d,
+  destination: null,
+  id: null,
+  offers: [],
+  type: typesOfEvents[0],
+};
 
 const FilterType = {
   EVERYTHING: 'Everything',
@@ -28,6 +40,7 @@ const UpdateType = {
 
 export {
   typesOfEvents,
+  BLANK_POINT,
   FilterType,
   SortType,
   UserAction,

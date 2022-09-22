@@ -1,31 +1,21 @@
 import he from 'he';
+import { BLANK_POINT } from '../const';
 import { getLastWord, getOffersByType, humanizeDateByDDMMYY, humanizeDateByTime } from '../utils/point';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
-import dayjs from 'dayjs';
-
-const BLANK_POINT = {
-  basePrice: 0,
-  dateFrom: dayjs().$d,
-  dateTo: dayjs().$d,
-  destination: {},
-  id: null,
-  offers: [],
-  type: '',
-};
 
 const createTripEditTemplate = (data, allDestinations, allOffers) => {
   const { basePrice, dateFrom, dateTo, type, destination, offers } = data;
-
-  const currentDestination = allDestinations.find((item) => item.id === destination);
 
   const offersByType = getOffersByType(allOffers, type);
   const dateFromDDMMYYFormat = humanizeDateByDDMMYY(dateFrom);
   const dateToDDMMYYFormat = humanizeDateByDDMMYY(dateTo);
   const dateFromInTimeFormat = humanizeDateByTime(dateFrom);
   const dateToInTimeFormat = humanizeDateByTime(dateTo);
+
+  const currentDestination = destination ? allDestinations.find((item) => item.id === destination) : '';
 
   const createEventType = (event) => (
     `<div class="event__type-wrapper">
@@ -49,24 +39,10 @@ const createTripEditTemplate = (data, allDestinations, allOffers) => {
     </div>`
   );
 
-  const createPlace = (selectedCity) => (
-    `<div class="event__field-group  event__field-group--destination">
-      <label class="event__label  event__type-output" for="event-destination-1">
-        ${type}
-      </label>
-      <input
-        class="event__input
-        event__input--destination"
-        id="event-destination-1"
-        type="text"
-        name="event-destination"
-        value="${he.encode(selectedCity)}"
-        list="destination-list-1"
-      >
-      <datalist id="destination-list-1">
-        ${allDestinations.map((item) => `<option value="${item.name}" ${selectedCity === item.name ? 'selected' : ''}>${item.name}</option>`).join('')}
-      </datalist>
-    </div>`
+  const createPlace = () => (
+    `<datalist id="destination-list-1">
+      ${allDestinations.map((item) => `<option value="${item.name}">${item.name}</option>`).join('')}
+    </datalist>`
   );
 
   const createOffers = (items) => (
@@ -114,7 +90,22 @@ const createTripEditTemplate = (data, allDestinations, allOffers) => {
 
           </div>
 
-          ${createPlace(currentDestination.name)}
+          <div class="event__field-group  event__field-group--destination">
+            <label class="event__label  event__type-output" for="event-destination-1">
+              ${type}
+            </label>
+            <input
+              class="event__input
+              event__input--destination"
+              id="event-destination-1"
+              type="text"
+              name="event-destination"
+              value="${he.encode(currentDestination ? currentDestination.name : '')}"
+              list="destination-list-1"
+            >
+            ${currentDestination ? createPlace(currentDestination.name) : ''}
+          </div>
+
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
@@ -161,7 +152,7 @@ const createTripEditTemplate = (data, allDestinations, allOffers) => {
 
           </section>
 
-          ${createDestination(currentDestination)}
+          ${currentDestination ? createDestination(currentDestination) : ''}
 
         </section>
       </form>
