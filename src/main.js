@@ -6,7 +6,7 @@ import FilterModel from './model/filter-model.js';
 import NewTripPointButtonView from './view/new-trip-point-button-view.js';
 import PointsApiService from './points-api-service.js';
 
-const AUTHORIZATION = 'Basic er82e23rdsafsd212qw';
+const AUTHORIZATION = 'Basic er883jdzbdw344sda';
 const END_POINT = 'https://18.ecmascript.pages.academy/big-trip';
 
 const siteHeaderElement = document.querySelector('.page-header');
