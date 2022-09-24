@@ -1,12 +1,12 @@
 import he from 'he';
-import { BLANK_POINT } from '../const';
+import { typesOfEvents, BLANK_POINT } from '../const';
 import { getLastWord, getOffersByType, humanizeDateByDDMMYY, humanizeDateByTime } from '../utils/point';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
-const createEventTypeTemplate = (event, currentType) => (
+const createEventTypeTemplate = (events = typesOfEvents, currentType) => (
   `<div class="event__type-wrapper">
       <label class="event__type  event__type-btn" for="event-type-toggle-1">
         <span class="visually-hidden">Choose event type</span>
@@ -18,7 +18,7 @@ const createEventTypeTemplate = (event, currentType) => (
         <fieldset class="event__type-group">
           <legend class="visually-hidden">Event type</legend>
 
-          ${event.map((item) => `<div class="event__type-item">
+          ${events.map((item) => `<div class="event__type-item">
             <input id="event-type-${item.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.type}">
             <label class="event__type-label  event__type-label--${item.type}" for="event-type-${item.type}-1">${item.type}</label>
           </div>`).join('')}
@@ -35,8 +35,7 @@ const createPlaceTemplate = (destinations) => (
 );
 
 const createOffersTemplate = (offersByType, offers, isDisabled) => (
-  `<div class="event__available-offers">
-  ${offersByType.map((offer) =>
+  offersByType.map((offer) =>
     `<div class="event__offer-selector">
       <input
         class="event__offer-checkbox  visually-hidden"
@@ -53,8 +52,7 @@ const createOffersTemplate = (offersByType, offers, isDisabled) => (
         <span class="event__offer-price">${offer.price}</span>
       </label>
     </div>`
-  ).join('')}
-  </div>`
+  ).join('')
 );
 
 const createDestinationTemplate = (currentDestination) => (
@@ -73,7 +71,7 @@ const createDestinationTemplate = (currentDestination) => (
 const createTripEditTemplate = (data, allDestinations, allOffers) => {
   const { basePrice, dateFrom, dateTo, type, destination, offers, isDisabled, isSaving, isDeleting } = data;
 
-  const offersByType = getOffersByType(allOffers, type);
+  const offersByType = allOffers ? getOffersByType(allOffers, type) : '';
   const dateFromDDMMYYFormat = humanizeDateByDDMMYY(dateFrom);
   const dateToDDMMYYFormat = humanizeDateByDDMMYY(dateTo);
   const dateFromInTimeFormat = humanizeDateByTime(dateFrom);
@@ -83,9 +81,9 @@ const createTripEditTemplate = (data, allDestinations, allOffers) => {
 
   const eventTypeTemplate = createEventTypeTemplate(allOffers, type);
 
-  const placeTemplate = createPlaceTemplate(allDestinations);
+  const placeTemplate = allDestinations ? createPlaceTemplate(allDestinations) : '';
 
-  const offersTemplate = createOffersTemplate(offersByType.offers, offers, isDisabled);
+  const offersTemplate = offersByType ? createOffersTemplate(offersByType.offers, offers, isDisabled) : '';
 
   const destinationTemplate = currentDestination ? createDestinationTemplate(currentDestination) : '';
 
@@ -111,6 +109,7 @@ const createTripEditTemplate = (data, allDestinations, allOffers) => {
               list="destination-list-1"
               value="${he.encode(currentDestination ? currentDestination.name : '')}"
               ${isDisabled ? 'disabled' : ''}
+              required
             >
             ${placeTemplate}
           </div>
@@ -150,8 +149,11 @@ const createTripEditTemplate = (data, allDestinations, allOffers) => {
               id="event-price-1"
               type="text"
               name="event-price"
-              value="${basePrice}"
+              ${basePrice === 0 ? `
+              value=""
+              placeholder="0"` : `value="${basePrice}"`}
               ${isDisabled ? 'disabled' : ''}
+              required
             >
           </div>
 
@@ -179,7 +181,9 @@ const createTripEditTemplate = (data, allDestinations, allOffers) => {
           <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
+            <div class="event__available-offers">
               ${offersTemplate}
+            </div>
 
           </section>
 
@@ -251,6 +255,7 @@ export default class TripEditView extends AbstractStatefulView {
 
   #placeChangeHandler = (evt) => {
     evt.preventDefault();
+
     if (evt.target.value !== '') {
       this.updateElement({
         destination: this.#allDestinations.find((destination) => evt.target.value === destination.name).id,
