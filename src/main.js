@@ -24,8 +24,10 @@ const boardPresenter = new BoardPresenter(
   pointsModel,
   filterModel,
 );
+
 const filterPresenter = new FilterPresenter(
   siteTripControlElement,
+  pointsModel,
   filterModel,
 );
 
