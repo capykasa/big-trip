@@ -3,7 +3,7 @@ import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import LoadingView from '../view/loading-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
-import TripSortView from '../view/trip-sort-view-view.js';
+import TripSortView from '../view/trip-sort-view.js';
 import PointPresenter from './point-presenter.js';
 import { sortByDate, sortByPrice } from '../utils/point.js';
 import { filter } from '../utils/filter.js';

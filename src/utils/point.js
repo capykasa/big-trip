@@ -8,8 +8,8 @@ const humanizeDateByTime = (dueDate) => dayjs(dueDate).format('H:mm');
 const isFuturePoint = (dueDate) => dueDate && dayjs().isBefore(dueDate, 'm');
 
 const getLastWord = (text) => {
-  const wordsArray = text.split(' ');
-  return wordsArray[wordsArray.length - 1];
+  const words = text.split(' ');
+  return words[words.length - 1];
 };
 
 const getWeightForSort = (itemA, itemB) => {
