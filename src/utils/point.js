@@ -34,10 +34,10 @@ const sortByDate = (pointA, pointB) => {
   return weight ?? dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 };
 
-const sortByPrice = (pointA, pointB) => {
+const sortPriceDown = (pointA, pointB) => {
   const weight = getWeightForSort(pointA.basePrice, pointB.basePrice);
 
-  return weight ?? dayjs(pointA.basePrice).diff(dayjs(pointB.basePrice));
+  return weight ?? dayjs(pointB.basePrice).diff(dayjs(pointA.basePrice));
 };
 
 const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
@@ -54,7 +54,7 @@ export {
   isFuturePoint,
   getLastWord,
   sortByDate,
-  sortByPrice,
+  sortPriceDown,
   isDatesEqual,
   getOffersByType,
   getCurrentOffers,
