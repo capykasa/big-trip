@@ -1,5 +1,5 @@
 import { render, replace, remove } from '../framework/render.js';
-import FilterView from '../view/trip-filter-view.js';
+import TripFilterView from '../view/trip-filter-view.js';
 import { FilterType, UpdateType } from '../const.js';
 
 export default class FilterPresenter {
@@ -36,7 +36,7 @@ export default class FilterPresenter {
     const prevFilterComponent = this.#filterComponent;
     const points = this.#pointsModel.points;
 
-    this.#filterComponent = new FilterView(filters, this.#filterModel.filter, points);
+    this.#filterComponent = new TripFilterView(filters, this.#filterModel.filter, points);
     this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterTypeChange);
 
     if (prevFilterComponent === null) {

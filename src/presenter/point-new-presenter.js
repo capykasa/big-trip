@@ -32,7 +32,7 @@ export default class PointNewPresenter {
 
     render(this.#tripEditComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
 
-    document.addEventListener('keydown', this.#onEscKeyDown);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
   destroy = () => {
@@ -45,7 +45,7 @@ export default class PointNewPresenter {
     remove(this.#tripEditComponent);
     this.#tripEditComponent = null;
 
-    document.removeEventListener('keydown', this.#onEscKeyDown);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
   };
 
   setSaving = () => {
@@ -79,7 +79,7 @@ export default class PointNewPresenter {
     this.destroy();
   };
 
-  #onEscKeyDown = (evt) => {
+  #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.destroy();

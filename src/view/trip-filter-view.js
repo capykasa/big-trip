@@ -42,7 +42,7 @@ const createFilterTemplate = (filterItems, currentFilterType, points) => {
   );
 };
 
-export default class FilterView extends AbstractView {
+export default class TripFilterView extends AbstractView {
   #filters = null;
   #currentFilter = null;
   #points = null;

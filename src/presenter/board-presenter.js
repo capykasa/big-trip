@@ -3,9 +3,9 @@ import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
 import ListEmptyView from '../view/list-empty-view.js';
 import LoadingView from '../view/loading-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
-import TripSortView from '../view/trip-sort-view-view.js';
+import TripSortView from '../view/trip-sort-view.js';
 import PointPresenter from './point-presenter.js';
-import { sortByDate, sortByPrice } from '../utils/point.js';
+import { sortByDate, sortPriceDown } from '../utils/point.js';
 import { filter } from '../utils/filter.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import PointNewPresenter from './point-new-presenter.js';
@@ -51,7 +51,7 @@ export default class BoardPresenter {
       case SortType.DAY:
         return filteredPoints.sort(sortByDate);
       case SortType.PRICE:
-        return filteredPoints.sort(sortByPrice);
+        return filteredPoints.sort(sortPriceDown);
     }
 
     return filteredPoints;
